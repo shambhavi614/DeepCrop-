@@ -1,0 +1,154 @@
+{
+  "Apple___Apple_scab": {
+    "treatment": "Remove infected leaves and fruits, spray with a fungicide such as mancozeb or captan.",
+    "product": "Dithane M-45, Captan 50 WP"
+  },
+  "Apple___Black_rot": {
+    "treatment": "Prune infected branches and apply copper-based fungicide during dormant season.",
+    "product": "Copper Oxychloride, Bordeaux Mixture"
+  },
+  "Apple___Cedar_apple_rust": {
+    "treatment": "Remove nearby juniper trees and apply fungicide early in the season.",
+    "product": "Myclobutanil, Propiconazole"
+  },
+  "Apple___healthy": {
+    "treatment": "No treatment required.",
+    "product": "N/A"
+  },
+  "Blueberry___healthy": {
+    "treatment": "No treatment required.",
+    "product": "N/A"
+  },
+  "Cherry_(including_sour)___Powdery_mildew": {
+    "treatment": "Apply sulfur or neem oil spray. Ensure proper air circulation.",
+    "product": "Sulfur Dust, Neem Oil"
+  },
+  "Cherry_(including_sour)___healthy": {
+    "treatment": "No treatment required.",
+    "product": "N/A"
+  },
+  "Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot": {
+    "treatment": "Use resistant hybrids and apply fungicides containing strobilurins or triazoles.",
+    "product": "Azoxystrobin (Amistar), Propiconazole"
+  },
+  "Corn_(maize)___Common_rust_": {
+    "treatment": "Spray fungicides when disease appears early, and plant resistant hybrids.",
+    "product": "Mancozeb, Pyraclostrobin"
+  },
+  "Corn_(maize)___Northern_Leaf_Blight": {
+    "treatment": "Use crop rotation and resistant varieties, apply fungicide if needed.",
+    "product": "Tilt 250 EC (Propiconazole), Azoxystrobin"
+  },
+  "Corn_(maize)___healthy": {
+    "treatment": "No treatment required.",
+    "product": "N/A"
+  },
+  "Grape___Black_rot": {
+    "treatment": "Prune infected canes and apply fungicide regularly during humid periods.",
+    "product": "Captan, Mancozeb, Myclobutanil"
+  },
+  "Grape___Esca_(Black_Measles)": {
+    "treatment": "Remove infected vines, disinfect pruning tools, and apply systemic fungicides.",
+    "product": "Thiophanate-methyl, Topsin-M"
+  },
+  "Grape___Leaf_blight_(Isariopsis_Leaf_Spot)": {
+    "treatment": "Spray mancozeb or chlorothalonil at first signs of infection.",
+    "product": "Dithane M-45, Kavach"
+  },
+  "Grape___healthy": {
+    "treatment": "No treatment required.",
+    "product": "N/A"
+  },
+  "Orange___Haunglongbing_(Citrus_greening)": {
+    "treatment": "Remove infected trees and control psyllid insect vectors.",
+    "product": "Imidacloprid, Neem oil spray"
+  },
+  "Peach___Bacterial_spot": {
+    "treatment": "Prune infected twigs and spray with copper-based fungicide.",
+    "product": "Copper Oxychloride, Bordeaux mixture"
+  },
+  "Peach___healthy": {
+    "treatment": "No treatment required.",
+    "product": "N/A"
+  },
+  "Pepper,_bell___Bacterial_spot": {
+    "treatment": "Use copper-based bactericides and avoid overhead irrigation.",
+    "product": "Copper Hydroxide, Mancozeb"
+  },
+  "Pepper,_bell___healthy": {
+    "treatment": "No treatment required.",
+    "product": "N/A"
+  },
+  "Potato___Early_blight": {
+    "treatment": "Spray with fungicides like chlorothalonil or mancozeb at first signs of disease.",
+    "product": "Dithane M-45, Ridomil Gold"
+  },
+  "Potato___Late_blight": {
+    "treatment": "Apply metalaxyl-based fungicides and destroy infected tubers.",
+    "product": "Metalaxyl, Mancozeb"
+  },
+  "Potato___healthy": {
+    "treatment": "No treatment required.",
+    "product": "N/A"
+  },
+  "Raspberry___healthy": {
+    "treatment": "No treatment required.",
+    "product": "N/A"
+  },
+  "Soybean___healthy": {
+    "treatment": "No treatment required.",
+    "product": "N/A"
+  },
+  "Squash___Powdery_mildew": {
+    "treatment": "Use sulfur-based sprays or potassium bicarbonate sprays weekly.",
+    "product": "Sulfur, MilStop"
+  },
+  "Strawberry___Leaf_scorch": {
+    "treatment": "Remove old leaves, improve airflow, and spray fungicides.",
+    "product": "Captan, Copper Oxychloride"
+  },
+  "Strawberry___healthy": {
+    "treatment": "No treatment required.",
+    "product": "N/A"
+  },
+  "Tomato___Bacterial_spot": {
+    "treatment": "Apply copper-based bactericides weekly during early infection.",
+    "product": "Copper Hydroxide, Mancozeb"
+  },
+  "Tomato___Early_blight": {
+    "treatment": "Use crop rotation and apply chlorothalonil or mancozeb sprays.",
+    "product": "Dithane M-45, Bravo"
+  },
+  "Tomato___Late_blight": {
+    "treatment": "Apply fungicides and remove infected plants immediately.",
+    "product": "Metalaxyl, Mancozeb"
+  },
+  "Tomato___Leaf_Mold": {
+    "treatment": "Ensure good ventilation, apply chlorothalonil or copper fungicides.",
+    "product": "Copper Oxychloride, Kavach"
+  },
+  "Tomato___Septoria_leaf_spot": {
+    "treatment": "Remove infected leaves and apply fungicides regularly.",
+    "product": "Mancozeb, Chlorothalonil"
+  },
+  "Tomato___Spider_mites Two-spotted_spider_mite": {
+    "treatment": "Use neem oil or miticide and increase humidity around plants.",
+    "product": "Neem Oil, Abamectin"
+  },
+  "Tomato___Target_Spot": {
+    "treatment": "Remove infected leaves and apply broad-spectrum fungicide.",
+    "product": "Chlorothalonil, Mancozeb"
+  },
+  "Tomato___Tomato_Yellow_Leaf_Curl_Virus": {
+    "treatment": "Control whiteflies and remove infected plants.",
+    "product": "Imidacloprid, Neem oil"
+  },
+  "Tomato___Tomato_mosaic_virus": {
+    "treatment": "Disinfect tools, remove infected plants, and use resistant varieties.",
+    "product": "Trisodium phosphate spray"
+  },
+  "Tomato___healthy": {
+    "treatment": "No treatment required.",
+    "product": "N/A"
+  }
+}

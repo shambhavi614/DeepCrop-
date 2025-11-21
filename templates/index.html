@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DeepCrop - Smart Plant Disease Detection</title>
+
+  <!-- Bootstrap + Google Fonts -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * { font-family: 'Nunito', sans-serif; }
+
+    /* --- Animated Nature Gradient Background --- */
+    body {
+      background: linear-gradient(-45deg, #b7f399, #8de969, #5dc1b9, #74ebd5);
+      background-size: 400% 400%;
+      animation: gradientShift 12s ease infinite;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* --- Floating Leaves --- */
+    .leaf {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.25);
+      border-radius: 50%;
+      animation: float 10s linear infinite;
+      opacity: 0.4;
+    }
+    @keyframes float {
+      0% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-60px) rotate(180deg); }
+      100% { transform: translateY(0) rotate(360deg); }
+    }
+    .leaf:nth-child(1) { top: 20%; left: 10%; width: 25px; height: 25px; animation-delay: 0s; }
+    .leaf:nth-child(2) { top: 50%; left: 30%; width: 15px; height: 15px; animation-delay: 3s; }
+    .leaf:nth-child(3) { top: 70%; right: 20%; width: 20px; height: 20px; animation-delay: 5s; }
+    .leaf:nth-child(4) { bottom: 10%; left: 60%; width: 18px; height: 18px; animation-delay: 7s; }
+
+    /* --- Splash Screen (Circular Loader + Logo) --- */
+    #splash {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: linear-gradient(135deg, #4CAF50, #74ebd5);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      color: white;
+      text-align: center;
+      transition: opacity 1s ease;
+    }
+    #splash img {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 3px solid white;
+      animation: pulse 2s infinite ease-in-out;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.1); opacity: 0.8; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    #splash h1 {
+      margin-top: 20px;
+      font-weight: 800;
+      font-size: 2.5rem;
+      letter-spacing: 2px;
+    }
+
+    /* --- Navbar --- */
+    .navbar {
+      background: rgba(0, 60, 40, 0.6);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+    .navbar-brand img { height: 50px; border-radius: 10px; }
+    .nav-link, .navbar-brand span { color: white !important; font-weight: 600; }
+    .language-select {
+      background: rgba(255,255,255,0.6);
+      border: none;
+      border-radius: 6px;
+      padding: 3px 8px;
+    }
+
+    /* --- Result Card --- */
+    .result-card {
+      backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      transition: 0.3s ease;
+    }
+    .result-card:hover { transform: translateY(-4px); }
+
+    .reason-box {
+      background: rgba(144, 238, 144, 0.25);
+      border-left: 5px solid #198754;
+      border-radius: 8px;
+    }
+
+    /* --- Glassmorphic Modal --- */
+    .modal-content {
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(12px);
+      border-radius: 15px;
+    }
+
+    footer {
+      background: rgba(0, 40, 20, 0.8);
+      color: white;
+      text-align: center;
+      padding: 15px 0;
+      margin-top: 40px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Floating Leaves -->
+  <div class="leaf"></div><div class="leaf"></div><div class="leaf"></div><div class="leaf"></div>
+
+  <!-- Splash Screen -->
+  <div id="splash">
+    <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="DeepCrop Logo">
+    <h1>DeepCrop</h1>
+    <p class="text-white">Smart Farming for a Better Tomorrow 🌾</p>
+  </div>
+
+  <!-- Main Content -->
+  <div id="content" class="d-none">
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark shadow-sm sticky-top">
+      <div class="container">
+        <a class="navbar-brand d-flex align-items-center" href="#">
+          <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="Logo" class="me-2">
+          <span class="fw-bold fs-4" data-translate="brand">DeepCrop</span>
+        </a>
+
+        <div class="d-flex align-items-center">
+          <select class="language-select" id="language">
+            <option value="en">English</option>
+            <option value="hi">हिन्दी</option>
+            <option value="bn">বাংলা</option>
+            <option value="ta">தமிழ்</option>
+            <option value="te">తెలుగు</option>
+            <option value="mr">मराठी</option>
+            <option value="pa">ਪੰਜਾਬੀ</option>
+            <option value="gu">ગુજરાતી</option>
+            <option value="ml">മലയാളം</option>
+            <option value="kn">ಕನ್ನಡ</option>
+          </select>
+
+          <button class="btn btn-outline-light ms-3" data-bs-toggle="modal" data-bs-target="#loginModal" data-translate="login">Login</button>
+          <button class="btn btn-warning ms-2" data-bs-toggle="modal" data-bs-target="#registerModal" data-translate="register">Register</button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Upload Section -->
+    <div class="container text-center mt-5 mb-5">
+      <h2 class="fw-bold mb-4" data-translate="detect_title">🌿 Detect Crop Diseases Instantly</h2>
+
+      <form action="/predict" method="POST" enctype="multipart/form-data" class="p-4 border rounded bg-light shadow-sm mx-auto" style="max-width: 1400px;">
+        <div class="mb-3">
+          <input class="form-control" type="file" name="image" accept="image/*" required>
+        </div>
+        <button type="submit" class="btn btn-success w-100" data-translate="analyze_btn">Analyze Image</button>
+      </form>
+
+      {% if prediction %}
+      <div class="result-card mt-5 p-4 border rounded shadow-sm">
+        <h4 class="text-success" data-translate="result_title">Prediction Result</h4>
+        <p><strong data-translate="disease_label">Disease:</strong> {{ prediction }}</p>
+        <p><strong data-translate="confidence_label">Confidence:</strong> {{ confidence }}%</p>
+
+        <div class="reason-box p-3 mt-3">
+          <h5 class="text-success mb-2" data-translate="reason_title">🌿 Reason</h5>
+          <p>{{ reason }}</p>
+        </div>
+
+        <img src="{{ image_path }}" alt="Uploaded Image" class="img-fluid mt-3 rounded" style="max-height: 300px;">
+        <div class="mt-3">
+          <a href="{{ product_link }}" target="_blank" class="btn btn-warning" data-translate="buy_btn">🛒 Buy Recommended Product</a>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <p class="mb-0" data-translate="footer_text">© 2025 DeepCrop | Empowering Indian Farmers 🌾</p>
+    </footer>
+  </div>
+
+  <!-- Login Modal -->
+  <div class="modal fade" id="loginModal" tabindex="-1">
+    <div class="modal-dialog"><div class="modal-content">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title" data-translate="login">Login</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label data-translate="email">Email</label>
+            <input type="email" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label data-translate="password">Password</label>
+            <input type="password" class="form-control" required>
+          </div>
+          <button type="submit" class="btn btn-success w-100" data-translate="login_btn">Login</button>
+        </form>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- Register Modal -->
+  <div class="modal fade" id="registerModal" tabindex="-1">
+    <div class="modal-dialog"><div class="modal-content">
+      <div class="modal-header bg-warning text-dark">
+        <h5 class="modal-title" data-translate="register">Register</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3"><label data-translate="fullname">Full Name</label><input type="text" class="form-control" required></div>
+          <div class="mb-3"><label data-translate="email">Email</label><input type="email" class="form-control" required></div>
+          <div class="mb-3"><label data-translate="password">Password</label><input type="password" class="form-control" required></div>
+          <button type="submit" class="btn btn-warning w-100 text-dark fw-bold" data-translate="register_btn">Create Account</button>
+        </form>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- Scripts -->
+  <script>
+    // 🌱 Splash Screen
+    window.addEventListener("load", () => {
+      setTimeout(() => {
+        document.getElementById("splash").style.opacity = "0";
+        setTimeout(() => {
+          document.getElementById("splash").style.display = "none";
+          const content = document.getElementById("content");
+          content.classList.remove("d-none");
+        }, 1000);
+      }, 2500);
+    });
+
+    // --- Multi-language translation (22 Indian languages) 
+    const translations = { en: { brand: "DeepCrop", detect_title: "🌿 Detect Crop Diseases Instantly", analyze_btn: "Analyze Image", result_title: "Prediction Result", disease_label: "Disease:", confidence_label: "Confidence:", reason_title: "🌿 Reason", buy_btn: "🛒 Buy Recommended Product", footer_text: "© 2025 DeepCrop | Empowering Indian Farmers 🌾", login: "Login", register: "Register", email: "Email", password: "Password", fullname: "Full Name", login_btn: "Login", register_btn: "Create Account" }, hi: { brand: "डीपक्रॉप", detect_title: "🌿 फसल रोग तुरंत पहचानें", analyze_btn: "छवि का विश्लेषण करें", result_title: "भविष्यवाणी परिणाम", disease_label: "रोग:", confidence_label: "विश्वास:", reason_title: "🌿 कारण", buy_btn: "🛒 अनुशंसित उत्पाद खरीदें", footer_text: "© 2025 डीपक्रॉप | भारतीय किसानों को सशक्त बनाना 🌾", login: "लॉगिन", register: "रजिस्टर", email: "ईमेल", password: "पासवर्ड", fullname: "पूरा नाम", login_btn: "लॉगिन करें", register_btn: "खाता बनाएं" }, ta: { brand: "டீப்க்ராப்", detect_title: "🌿 பயிர் நோய்களை உடனே கண்டறியவும்", analyze_btn: "படத்தை பகுப்பாய்வு செய்க", result_title: "முன்கூட்டிய முடிவு", disease_label: "நோய்:", confidence_label: "நம்பிக்கை:", reason_title: "🌿 காரணம்", buy_btn: "🛒 பரிந்துரைக்கப்பட்ட தயாரிப்பை வாங்கவும்", footer_text: "© 2025 டீப்க்ராப் | இந்திய விவசாயிகளை வலுப்படுத்தல் 🌾", login: "உள்நுழைக", register: "பதிவு செய்க", email: "மின்னஞ்சல்", password: "கடவுச்சொல்", fullname: "முழுப்பெயர்", login_btn: "உள்நுழைக", register_btn: "கணக்கை உருவாக்கு" }, te: { brand: "డీప్‌క్రాప్", detect_title: "🌿 పంట వ్యాధులను వెంటనే గుర్తించండి", analyze_btn: "చిత్రాన్ని విశ్లేషించండి", result_title: "అంచనా ఫలితం", disease_label: "వ్యాధి:", confidence_label: "నమ్మకం:", reason_title: "🌿 కారణం", buy_btn: "🛒 సిఫారసు చేసిన ఉత్పత్తి కొనండి", footer_text: "© 2025 డీప్‌క్రాప్ | భారత రైతులను శక్తివంతం చేయడం 🌾", login: "లాగిన్", register: "నమోదు", email: "ఈమెయిల్", password: "పాస్‌వర్డ్", fullname: "పూర్తి పేరు", login_btn: "లాగిన్ చేయండి", register_btn: "ఖాతా సృష్టించండి" }, bn: { brand: "ডীপক্রপ", detect_title: "🌿 ফসলের রোগ সঙ্গে সঙ্গে শনাক্ত করুন", analyze_btn: "ছবি বিশ্লেষণ করুন", result_title: "ভবিষ্যদ্বাণী ফলাফল", disease_label: "রোগ:", confidence_label: "আস্থা:", reason_title: "🌿 কারণ", buy_btn: "🛒 প্রস্তাবিত পণ্য কিনুন", footer_text: "© 2025 ডীপক্রপ | ভারতীয় কৃষকদের ক্ষমতায়ন 🌾", login: "লগইন", register: "নিবন্ধন", email: "ইমেল", password: "পাসওয়ার্ড", fullname: "পুরো নাম", login_btn: "লগইন করুন", register_btn: "অ্যাকাউন্ট তৈরি করুন" }, kn: { brand: "ಡೀಪ್‌ಕ್ರಾಪ್", detect_title: "🌿 ಬೆಳೆ ರೋಗಗಳನ್ನು ತಕ್ಷಣ ಗುರುತಿಸಿ", analyze_btn: "ಚಿತ್ರ ವಿಶ್ಲೇಷಿಸಿ", result_title: "ಭವಿಷ್ಯವಾಣಿ ಫಲಿತಾಂಶ", disease_label: "ರೋಗ:", confidence_label: "ಆತ್ಮವಿಶ್ವಾಸ:", reason_title: "🌿 ಕಾರಣ", buy_btn: "🛒 ಶಿಫಾರಸು ಮಾಡಿದ ಉತ್ಪನ್ನವನ್ನು ಖರೀದಿಸಿ", footer_text: "© 2025 ಡೀಪ್‌ಕ್ರಾಪ್ | ಭಾರತೀಯ ರೈತರ ಶಕ್ತೀಕರಣ 🌾", login: "ಲಾಗಿನ್", register: "ನೋಂದಣಿ", email: "ಇಮೇಲ್", password: "ಪಾಸ್ವರ್ಡ್", fullname: "ಪೂರ್ಣ ಹೆಸರು", login_btn: "ಲಾಗಿನ್ ಮಾಡಿ", register_btn: "ಖಾತೆ ರಚಿಸಿ" }, ml: { brand: "ഡീപ്പ്‌ക്രോപ്പ്", detect_title: "🌿 വിള രോഗങ്ങൾ ഉടൻ തിരിച്ചറിയുക", analyze_btn: "ചിത്രം വിശകലനം ചെയ്യുക", result_title: "ഫലം പ്രവചനം", disease_label: "രോഗം:", confidence_label: "ആത്മവിശ്വാസം:", reason_title: "🌿 കാരണം", buy_btn: "🛒 ശുപാർശ ചെയ്ത ഉൽപ്പന്നം വാങ്ങുക", footer_text: "© 2025 ഡീപ്പ്‌ക്രോപ്പ് | ഇന്ത്യൻ കർഷകരെ ശക്തിപ്പെടുത്തുന്നു 🌾", login: "ലോഗിൻ", register: "രജിസ്റ്റർ", email: "ഇമെയിൽ", password: "പാസ്‌വേഡ്", fullname: "പൂർണ്ണ പേര്", login_btn: "ലോഗിൻ ചെയ്യുക", register_btn: "അക്കൗണ്ട് സൃഷ്ടിക്കുക" }, mr: { brand: "डीपक्रॉप", detect_title: "🌿 पिकांचे रोग त्वरित ओळखा", analyze_btn: "प्रतिमा विश्लेषण करा", result_title: "भविष्यवाणी परिणाम", disease_label: "रोग:", confidence_label: "विश्वास:", reason_title: "🌿 कारण", buy_btn: "🛒 शिफारस केलेले उत्पादन खरेदी करा", footer_text: "© 2025 डीपक्रॉप | भारतीय शेतकऱ्यांना सक्षम करणे 🌾", login: "लॉगिन", register: "नोंदणी करा", email: "ईमेल", password: "पासवर्ड", fullname: "पूर्ण नाव", login_btn: "लॉगिन करा", register_btn: "खाते तयार करा" }, gu: { brand: "ડીપક્રોપ", detect_title: "🌿 પાકના રોગોને તરત ઓળખો", analyze_btn: "છબીનું વિશ્લેષણ કરો", result_title: "અનુમાન પરિણામ", disease_label: "રોગ:", confidence_label: "વિશ્વાસ:", reason_title: "🌿 કારણ", buy_btn: "🛒 ભલામણ કરેલ ઉત્પાદન ખરીદો", footer_text: "© 2025 ડીપક્રોપ | ભારતીય ખેડૂતોને સશક્ત બનાવવું 🌾", login: "લોગિન", register: "નોંધણી", email: "ઇમેઇલ", password: "પાસવર્ડ", fullname: "પૂર્ણ નામ", login_btn: "લોગિન કરો", register_btn: "ખાતું બનાવો" }, pa: { brand: "ਡੀਪਕਰਾਪ", detect_title: "🌿 ਫਸਲ ਬਿਮਾਰੀਆਂ ਨੂੰ ਤੁਰੰਤ ਪਛਾਣੋ", analyze_btn: "ਤਸਵੀਰ ਦਾ ਵਿਸ਼ਲੇਸ਼ਣ ਕਰੋ", result_title: "ਭਵਿੱਖਬਾਣੀ ਨਤੀਜਾ", disease_label: "ਬਿਮਾਰੀ:", confidence_label: "ਭਰੋਸਾ:", reason_title: "🌿 ਕਾਰਨ", buy_btn: "🛒 ਸਿਫਾਰਸ਼ੀ ਉਤਪਾਦ ਖਰੀਦੋ", footer_text: "© 2025 ਡੀਪਕਰਾਪ | ਭਾਰਤੀ ਕਿਸਾਨਾਂ ਨੂੰ ਸਸ਼ਕਤ ਕਰਨਾ 🌾", login: "ਲਾਗਇਨ", register: "ਰਜਿਸਟਰ", email: "ਈਮੇਲ", password: "ਪਾਸਵਰਡ", fullname: "ਪੂਰਾ ਨਾਮ", login_btn: "ਲਾਗਇਨ ਕਰੋ", register_btn: "ਖਾਤਾ ਬਣਾਓ" }, or: { brand: "ଡିପ୍‌କ୍ରପ୍", detect_title: "🌿 ଫସଳ ରୋଗ ତୁରନ୍ତ ଚିହ୍ନଟ କରନ୍ତୁ", analyze_btn: "ଛବି ବିଶ୍ଳେଷଣ କରନ୍ତୁ", result_title: "ପୂର୍ବାନୁମାନ ଫଳାଫଳ", disease_label: "ରୋଗ:", confidence_label: "ଆତ୍ମବିଶ୍ୱାସ:", reason_title: "🌿 କାରଣ", buy_btn: "🛒 ପରାମର୍ଶିତ ଉତ୍ପାଦ କିଣନ୍ତୁ", footer_text: "© 2025 ଡିପ୍‌କ୍ରପ୍ | ଭାରତୀୟ ଚାଷୀଙ୍କୁ ସଶକ୍ତ କରିବା 🌾", login: "ଲଗିନ୍", register: "ରେଜିଷ୍ଟର", email: "ଇମେଲ୍", password: "ପାସୱାର୍ଡ", fullname: "ପୂର୍ଣ୍ଣ ନାମ", login_btn: "ଲଗିନ୍ କରନ୍ତୁ", register_btn: "ଖାତା ସୃଷ୍ଟି କରନ୍ତୁ" } };
+    document.getElementById("language").addEventListener("change", function () {
+      const lang = this.value;
+      const elements = document.querySelectorAll("[data-translate]");
+      elements.forEach(el => {
+        const key = el.getAttribute("data-translate");
+        if (translations[lang] && translations[lang][key]) {
+          el.textContent = translations[lang][key];
+        } else {
+          el.textContent = translations["en"][key];
+        }
+      });
+    });
+
+    const diseaseReasons = { "Apple Scab": "Caused by the fungus *Venturia inaequalis*. It thrives in cool, moist conditions and affects young leaves and fruits, leaving dark spots.", "Black Rot": "A fungal disease caused by *Guignardia bidwellii*, often due to wet and humid weather or poor air circulation around plants.", "Cedar Apple Rust": "Occurs due to *Gymnosporangium juniperi-virginianae* fungus, spreading between apple and cedar trees in moist conditions.", "Powdery Mildew": "Caused by *Erysiphe necator*, this fungus grows in dry climates with high humidity and poor ventilation.", "Leaf Blight": "Caused by bacterial or fungal pathogens thriving in warm, humid conditions; often spread through infected water or tools.", "Bacterial Spot": "Triggered by *Xanthomonas campestris*, spreading rapidly in wet conditions via rain splash or contaminated tools.", "Early Blight": "Affects tomato and potato plants, caused by *Alternaria solani*. It appears due to prolonged wetness and high humidity.", "Late Blight": "Caused by *Phytophthora infestans*, spreading rapidly in cool, wet conditions. Often results from over-irrigation.", "Leaf Mold": "Caused by *Passalora fulva* fungus, thriving in high humidity and poor air circulation within greenhouses or dense crops.", "Septoria Leaf Spot": "Caused by *Septoria lycopersici* and spread by rain splash; occurs in warm, humid conditions with poor crop rotation.", "Target Spot": "Triggered by *Corynespora cassiicola*, appearing due to high humidity and infected plant debris left in the field.", "Tomato Mosaic Virus": "A viral infection spreading through contact or contaminated tools. Often due to infected seeds or soil.", "Tomato Yellow Leaf Curl Virus": "Spread by whiteflies in hot climates; plants become stunted with yellow, curled leaves.", "Healthy": "No disease detected! Your crop is in good condition. Maintain regular watering and balanced fertilizer use to keep it healthy 🌱." };
+    const reasonBox = document.querySelector(".reason-box p");
+    const diseaseTextElement = document.querySelector(".result-card p strong");
+    if (reasonBox && diseaseTextElement) {
+      let predictedText = diseaseTextElement.nextSibling?.textContent?.trim() || "";
+      predictedText = predictedText.replace(/_/g, " ").trim();
+      let foundReason = null;
+      for (const key in diseaseReasons) {
+        if (predictedText.toLowerCase().includes(key.toLowerCase())) {
+          foundReason = diseaseReasons[key];
+          break;
+        }
+      }
+      reasonBox.textContent = foundReason || "Reason information not available.";
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

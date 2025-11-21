@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepCrop | Result</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #96c93d, #00b09b);
+            color: white;
+            text-align: center;
+            padding-top: 100px;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 30px;
+            border-radius: 20px;
+            width: 500px;
+            margin: auto;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+        img {
+            width: 250px;
+            height: 250px;
+            border-radius: 15px;
+            object-fit: cover;
+            margin-bottom: 20px;
+        }
+        a {
+            color: #fffdc1;
+            text-decoration: underline;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌿 Disease Detected</h1>
+        <img src="{{ image_path }}" alt="Uploaded Image">
+        <h2>{{ disease }}</h2>
+        <p><strong>Treatment:</strong> {{ treatment }}</p>
+        <p><a href="{{ link }}" target="_blank">🛒 Buy Recommended Product</a></p>
+        <a href="/">🔙 Back to Home</a>
+    </div>
+</body>
+</html>
